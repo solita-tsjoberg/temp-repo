@@ -25,15 +25,15 @@ Försök skriva om plottarna så att de använder ett funktions anrop istället 
 
 Hjälp på format på hur koden skulle kunna se ut:
 ```{r}
-descriptive_name_for_plotting_func <- function(data, anstallningsform_string) {
+#descriptive_name_for_plotting_func <- function(data, anstallningsform_string) {
   
-}
+#}
 
-salary_data %>% descriptive_name_for_plotting_func('tillsvidare') 
+#salary_data %>% descriptive_name_for_plotting_func('tillsvidare') 
 ```
 
 ```{r}
-salary_data %>% descriptive_name_for_plotting_func('tidsbegransad') 
+#salary_data %>% descriptive_name_for_plotting_func('tidsbegransad') 
 ```
 
 Om du vill kan du efter övningen är klar göra en git-commit för att öva :)
@@ -48,11 +48,11 @@ TIPS: KOlla på slidesen för funktionsskrivande i dplyr!
 
 Formathjälp:
 ```{r}
-descriptive_name_for_plotting_func <- function(data, filter_column, filter_string) {
+#descriptive_name_for_plotting_func <- function(data, filter_column, filter_string) {
   
-}
+#}
 
-salary_data %>% descriptive_name_for_plotting_func(avdelning, "ekonomi") 
+#salary_data %>% descriptive_name_for_plotting_func(avdelning, "ekonomi") 
 ```
 
 
