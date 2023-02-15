@@ -1,0 +1,185 @@
+---
+title: "Good Programming Practice övning"
+author: "Torbjörn Sjöberg"
+date: "2023-02-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Good Programming Practice - Övning
+
+Målet i den här övningen är att testa på lite olika sätt att skriva bättre kod!
+
+Övningen innehåller filstrukturerings-uppgifter och uppmuntras även till att använda git.
+Det gör att känn dig fri att ändra överallt i koden och skala även gärna bort de här instruktionerna då de för "kodens" mål inte spelar någon roll.
+
+Allt under den här texten är "riktig" kod som ni kan öva på att förbättra.
+
+
+### Övning 1 
+I kodcellen där de första två bilderna på lön som funktion av kon/ålder/anställningsform så är det två väldigt lika plottar som görs!
+
+Försök skriva om plottarna så att de använder ett funktions anrop istället så att koden blir mer DRY!
+
+Hjälp på format på hur koden skulle kunna se ut:
+```{r}
+descriptive_name_for_plotting_func <- function(data, anstallningsform_string) {
+  
+}
+
+salary_data %>% descriptive_name_for_plotting_func('tillsvidare') 
+```
+
+```{r}
+salary_data %>% descriptive_name_for_plotting_func('tidsbegransad') 
+```
+
+Om du vill kan du efter övningen är klar göra en git-commit för att öva :)
+
+### Övning 2
+De senare plottarna med avdelningsfiltrering är faktiskt också rätt lika de innan.
+
+De har dock en annan kolumn som de filtreras på!
+Uppgiften är att skriva en funktion som kan användas för BÅDE anställningsform och avdelningsgrupperingarna?
+
+TIPS: KOlla på slidesen för funktionsskrivande i dplyr! 
+
+Formathjälp:
+```{r}
+descriptive_name_for_plotting_func <- function(data, filter_column, filter_string) {
+  
+}
+
+salary_data %>% descriptive_name_for_plotting_func(avdelning, "ekonomi") 
+```
+
+
+### Övning 3
+Ta din nya funktion och lägg den i en r-skript fil någonstans i projektet som passar!
+
+Läs sedan in skriptet på samma ställe som paketen importeras :)
+
+
+### Övning 4
+Ta data importeringskoden och bearbetningskoden, kombinera den till en eller flera funktioner och gör som på förra övningen!
+
+
+
+
+------------------- HÄR BÖRJAR KODEN VI JOBBAR PÅ --------------------
+
+### importera paket
+
+```{r imports}
+library(skimr)
+library(tidyverse)
+library(janitor)
+
+```
+
+
+## Läs in lönedata
+
+```{r read_data}
+salary_data <- read_delim("lonedata.csv", delim = ";") %>% 
+  janitor::clean_names()
+```
+
+
+```{r inspect_data}
+salary_data %>% skim()
+salary_data %>% glimpse()
+
+```
+
+```{r clean_data}
+salary_data <- salary_data %>% janitor::clean_names()
+
+# fixa trasiga tecken
+salary_data <- salary_data %>% 
+  mutate(
+    avdelning = if_else(avdelning == 'Vaktm?steri', 'Vaktmasteri', avdelning),
+    anstallning = if_else(anstallning == 'Tidsbegr?nsad', 'Tidsbegransad', anstallning)
+         )
+
+# gör alla textfält till lowercase
+salary_data <- salary_data %>% 
+  mutate(across(where(is.character), tolower))
+
+```
+
+
+
+## Hur mycket tjänar olika åldersgrupper beroende på kön och Anställningsform?
+
+Tillvidareanställda
+```{r}
+salary_data %>% 
+  filter(anstallning == "tillsvidare") %>% 
+  group_by(kon, alder_3) %>% 
+  summarize(snitt_lon = mean(lon)) %>% 
+  ggplot(aes(x = alder_3, y = snitt_lon, fill = snitt_lon)) +
+    geom_col() + 
+    facet_wrap(~kon)
+
+
+```
+
+Tidsbegränsade
+```{r}
+salary_data %>% 
+  filter(anstallning == "tidsbegransad") %>% 
+  group_by(kon, alder_3) %>% 
+  summarize(snitt_lon = mean(lon)) %>% 
+  ggplot(aes(x = alder_3, y = snitt_lon, fill = snitt_lon)) +
+    geom_col() +
+    facet_wrap(~ kon)
+
+```
+..Insikter och analys..
+
+
+
+
+
+
+
+## Hur ser det ut över olika avdelningar?
+Logistik
+```{r}
+salary_data %>% 
+  filter(avdelning == "logistik") %>% 
+  group_by(kon, alder_3) %>% 
+  summarize(snitt_lon = mean(lon)) %>% 
+  ggplot(aes(x = alder_3, y = snitt_lon, fill = snitt_lon)) +
+    geom_col() +
+    facet_wrap(~ kon)
+
+```
+
+ekonomi
+```{r}
+salary_data %>% 
+  filter(avdelning == "ekonomi") %>% 
+  group_by(kon, alder_3) %>% 
+  summarize(snitt_lon = mean(lon)) %>% 
+  ggplot(aes(x = alder_3, y = snitt_lon, fill = snitt_lon)) +
+    geom_col() +
+    facet_wrap(~ kon)
+
+```
+marknad
+```{r}
+salary_data %>% 
+  filter(avdelning == "marknad") %>% 
+  group_by(kon, alder_3) %>% 
+  summarize(snitt_lon = mean(lon)) %>% 
+  ggplot(aes(x = alder_3, y = snitt_lon, fill = snitt_lon)) +
+    geom_col() +
+    facet_wrap(~ kon)
+
+```
+
+Och så vidare och så vidare.
